@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usitec | Painel de Controle</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">
+            <!-- AQUI ESTÁ A SUA LOGO -->
+            <img src="img/logo.png" alt="Logo Usitec" class="brand-logo">
+            
+            <div class="brand-sub">
+                <small>Consultoria Industrial • Indústria 4.0</small>
+            </div>
+        </div>
+
+        <nav class="menu">
+            <a href="#" class="active" data-view="overview">
+                <span class="menu-icon">📊</span> Visão Geral
+            </a>
+            <a href="#" data-view="machines">
+                <span class="menu-icon">🖥️</span> Máquinas
+            </a>
+            <a href="#" data-view="register">
+                <span class="menu-icon">➕</span> Cadastrar
+            </a>
+            <a href="#" data-view="alerts">
+                <span class="menu-icon">🔔</span> Alertas
+                <span class="badge" id="alertCount">0</span>
+            </a>
+            <a href="#" data-view="energy">
+                <span class="menu-icon">⚡</span> Energia
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user">
+                <div class="avatar">UT</div>
+                <div>
+                    <strong>Tim Oliveira</strong>
+                    <small>Eng. de Processos</small>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div>
+                <h1 id="pageTitle">Visão Geral</h1>
+                <p id="pageSubtitle">Monitoramento em tempo real</p>
+            </div>
+            <div class="topbar-actions">
+                <div class="live-indicator">
+                    <span class="pulse"></span> AO VIVO
+                </div>
+                <span class="clock" id="clock">--:--:--</span>
+            </div>
+        </header>
+
+        <!-- ============ VIEW: VISÃO GERAL ============ -->
+        <section class="view active" id="view-overview">
+
+            <div class="kpi-grid">
+                <div class="kpi">
+                    <div class="kpi-icon">📈</div>
+                    <div class="kpi-label">OEE Geral</div>
+                    <div class="kpi-value" id="kpiOee">--</div>
+                    <div class="kpi-trend up">▲ 3.2% vs. ontem</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-label">Produção / hora</div>
+                    <div class="kpi-value" id="kpiProd">--</div>
+                    <div class="kpi-trend up">▲ 12 pçs</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-icon">🖥️</div>
+                    <div class="kpi-label">Máquinas Ativas</div>
+                    <div class="kpi-value" id="kpiMachines">--</div>
+                    <div class="kpi-trend">no total</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-icon">🔔</div>
+                    <div class="kpi-label">Alertas Abertos</div>
+                    <div class="kpi-value" id="kpiAlerts">--</div>
+                    <div class="kpi-trend warn">Atenção requerida</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>OEE — Últimas 12 horas</h3>
+                        <span class="chip">Tempo real</span>
+                    </div>
+                    <div class="chart-container chart-line">
+                        <canvas id="oeeChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Consumo de Energia (kWh)</h3>
+                        <span class="chip">Hoje</span>
+                    </div>
+                    <div class="chart-container chart-bar">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Status das Máquinas</h3>
+                    <span class="chip" id="lastUpdate">--</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="machines-table">
+                        <thead>
+                            <tr>
+                                <th>Máquina</th>
+                                <th>Status</th>
+                                <th>OEE</th>
+                                <th>Temperatura</th>
+                                <th>Vibração</th>
+                                <th>Produção</th>
+                                <th>Consumo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="machinesBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Alertas Recentes</h3>
+                    <span class="chip warn" id="alertsChip">0 ativos</span>
+                </div>
+                <ul class="alerts-list" id="alertsList"></ul>
+            </div>
+        </section>
+
+        <!-- ============ VIEW: MÁQUINAS ============ -->
+        <section class="view" id="view-machines">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Máquinas Cadastradas</h3>
+                    <button class="btn btn-primary btn-sm" onclick="switchView('register')">+ Nova Máquina</button>
+                </div>
+                <div class="table-wrap">
+                    <table class="machines-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Modelo</th>
+                                <th>Consumo</th>
+                                <th>Produção</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="machinesFullBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============ VIEW: CADASTRAR ============ -->
+        <section class="view" id="view-register">
+            <div class="card">
+                <div class="card-header">
+                    <h3 id="formTitle">Cadastrar Nova Máquina</h3>
+                    <button class="btn btn-ghost btn-sm" onclick="resetForm()">Limpar</button>
+                </div>
+                <form id="machineForm" class="form-grid" onsubmit="event.preventDefault(); saveMachine();">
+                    <input type="hidden" id="machineId">
+
+                    <div class="form-group">
+                        <label>Nome da Máquina *</label>
+                        <input type="text" id="mName" placeholder="Ex: Torno CNC Romi GL-240" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Modelo / Fabricante</label>
+                        <input type="text" id="mModel" placeholder="Ex: Romi GL-240">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Consumo Energético (kWh) *</label>
+                        <input type="number" id="mEnergy" placeholder="Ex: 12.5" step="0.1" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Unidade de Produção *</label>
+                        <select id="mUnit" required>
+                            <option value="hora">Peças por Hora</option>
+                            <option value="segundo">Peças por Segundo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Capacidade de Produção *</label>
+                        <input type="number" id="mCapacity" placeholder="Ex: 120" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="mStatus">
+                            <option value="running">Operando</option>
+                            <option value="idle">Ociosa</option>
+                            <option value="stopped">Parada</option>
+                            <option value="maintenance">Manutenção</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-full">
+                        <label>Especificações Técnicas</label>
+                        <textarea id="mSpecs" rows="3" placeholder="Ex: Eixo X 500mm, rotação máx 4500 rpm, ferramenta BT-40..."></textarea>
+                    </div>
+
+                    <div class="form-actions form-full">
+                        <button type="button" class="btn btn-ghost" onclick="resetForm()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Máquina</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ============ VIEW: ALERTAS ============ -->
+        <section class="view" id="view-alerts">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Todos os Alertas</h3>
+                    <span class="chip warn" id="alertsChipFull">0 ativos</span>
+                </div>
+                <ul class="alerts-list" id="alertsListFull"></ul>
+            </div>
+        </section>
+
+        <!-- ============ VIEW: ENERGIA ============ -->
+        <section class="view" id="view-energy">
+            <div class="kpi-grid">
+                <div class="kpi">
+                    <div class="kpi-icon">⚡</div>
+                    <div class="kpi-label">Consumo Total (kWh)</div>
+                    <div class="kpi-value" id="energyTotal">--</div>
+                    <div class="kpi-trend">soma de todas as máquinas</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-label">Custo Estimado (R$)</div>
+                    <div class="kpi-value" id="energyCost">--</div>
+                    <div class="kpi-trend">R$ 0,75 / kWh</div>
+                </div>
+                <div class="kpi">
+                    <div class="kpi-icon">📉</div>
+                    <div class="kpi-label">Média por Máquina</div>
+                    <div class="kpi-value" id="energyAvg">--</div>
+                    <div class="kpi-trend">kWh</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Consumo por Máquina</h3>
+                    <span class="chip">kWh</span>
+                </div>
+                <div class="chart-container chart-bar-lg">
+                    <canvas id="energyPerMachineChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
