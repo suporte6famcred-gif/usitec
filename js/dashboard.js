@@ -164,10 +164,26 @@ let oeeChart, energyChart, energyPerMachineChart;
 const chartDefaults = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#111a2e', borderColor: '#1f2d4a', borderWidth: 1 } },
+    plugins: { 
+        legend: { display: false }, 
+        tooltip: { 
+            backgroundColor: '#FFFFFF', 
+            titleColor: '#0D1B2A',
+            bodyColor: '#5B636A',
+            borderColor: '#E2E8F0', 
+            borderWidth: 1 
+        } 
+    },
     scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#94a3b8', font: { size: 11 } }, beginAtZero: false }
+        x: { 
+            grid: { display: false }, 
+            ticks: { color: '#5B636A', font: { size: 11, family: 'Montserrat' } } 
+        },
+        y: { 
+            grid: { color: '#F1F5F9' }, 
+            ticks: { color: '#5B636A', font: { size: 11, family: 'Montserrat' } }, 
+            beginAtZero: false 
+        }
     }
 };
 
@@ -181,14 +197,14 @@ function initCharts() {
             data: {
                 labels: labels12,
                 datasets: [{
-                    data: [82, 85, 84, 88, 86, 83, 87, 90, 88, 85, 89, 87],
-                    borderColor: '#009B8E',
-                    backgroundColor: 'rgba(0, 155, 142, 0.15)',
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 3,
-                    pointBackgroundColor: '#009B8E',
-                }]
+                data: [82, 85, 84, 88, 86, 83, 87, 90, 88, 85, 89, 87],
+                borderColor: '#009B8E', // Ciano Usitec
+                backgroundColor: 'rgba(0, 155, 142, 0.1)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: '#009B8E',
+            }]
             },
             options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, min: 70, max: 100, ticks: { callback: v => v + '%', color: '#94a3b8' } } } }
         });
