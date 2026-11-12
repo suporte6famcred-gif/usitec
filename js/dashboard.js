@@ -182,12 +182,12 @@ function initCharts() {
                 labels: labels12,
                 datasets: [{
                     data: [82, 85, 84, 88, 86, 83, 87, 90, 88, 85, 89, 87],
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59,130,246,0.15)',
+                    borderColor: '#009B8E',
+                    backgroundColor: 'rgba(0, 155, 142, 0.15)',
                     fill: true,
                     tension: 0.4,
                     pointRadius: 3,
-                    pointBackgroundColor: '#3b82f6',
+                    pointBackgroundColor: '#009B8E',
                 }]
             },
             options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, min: 70, max: 100, ticks: { callback: v => v + '%', color: '#94a3b8' } } } }
@@ -202,7 +202,7 @@ function initCharts() {
                 labels: labels12,
                 datasets: [{
                     data: [42, 45, 48, 51, 49, 52, 58, 55, 50, 47, 44, 41],
-                    backgroundColor: 'rgba(245,158,11,0.6)',
+                    backgroundColor: 'rgba(0, 78, 94, 0.8)',
                     borderRadius: 6,
                 }]
             },
